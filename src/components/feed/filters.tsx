@@ -43,6 +43,7 @@ export default function SearchFilters({
   const [filteresPosts, setFilteredPosts] = useState(postsWithUser);
   const [userLocation, setUserLocation] =
     useState<GeolocationCoordinates | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     navigator.geolocation.getCurrentPosition((position) => {
@@ -54,6 +55,20 @@ export default function SearchFilters({
     console.log(value);
     if (value) {
       setFilteredPosts(postsWithUser.filter((post) => post.petType === value));
+    } else {
+      setFilteredPosts(postsWithUser);
+    }
+  };
+
+  const onQueryChange = (value: string) => {
+    console.log(value);
+    setSearchQuery(value);
+    if (value) {
+      setFilteredPosts(
+        postsWithUser.filter((post) =>
+          post.description.toLowerCase().includes(value.toLowerCase())
+        )
+      );
     } else {
       setFilteredPosts(postsWithUser);
     }
@@ -82,42 +97,29 @@ export default function SearchFilters({
   return (
     <div className="w-full lg:w-[60%] flex flex-col gap-4 justify-start py-4">
       <div className="flex justify-between items-center gap-4 w-full sticky top-0">
-        <Input placeholder="Search for " className="w-full" />
-        <Select
-        onValueChange={(value) => onFilterChange(value as PetType)}
-        >
+        <Input
+          placeholder="Search for "
+          className="w-full"
+          onChange={(e) => onQueryChange(e.target.value)}
+        />
+        <Select onValueChange={(value) => onFilterChange(value as PetType)}>
           <SelectTrigger className="w-[200px]">
             <SelectValue placeholder="Filter by pet type" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem
-              value="DOG"
-              className="text-sm"
-            >
+            <SelectItem value="DOG" className="text-sm">
               DOG
             </SelectItem>
-            <SelectItem
-              value="CAT"
-              className="text-sm"
-            >
+            <SelectItem value="CAT" className="text-sm">
               CAT
             </SelectItem>
-            <SelectItem
-              value="RABBIT"
-              className="text-sm"
-            >
+            <SelectItem value="RABBIT" className="text-sm">
               RABBIT
             </SelectItem>
-            <SelectItem
-              value="HAMSTER"
-              className="text-sm"
-            >
+            <SelectItem value="HAMSTER" className="text-sm">
               HAMSTER
             </SelectItem>
-            <SelectItem
-              value="OTHERS"
-              className="text-sm"
-            >
+            <SelectItem value="OTHERS" className="text-sm">
               OTHERS
             </SelectItem>
           </SelectContent>
